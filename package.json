@@ -1,0 +1,21 @@
+{
+  "name": "swagg-supply",
+  "version": "1.0.0",
+  "description": "Get your swag on with Swagg Supply, fo shizzle! This is a fake e-commerce website built using NodeJS and ExpressJS, and it uses the Fake Store API to get fake product data.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "lint": "eslint"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.35.0",
+    "eslint-config-prettier": "^8.7.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "nodemon": "^2.0.21",
+    "prettier": "^2.8.4"
+  }
+}
