@@ -59,6 +59,7 @@ build/Release
 
 # Dependency directories
 node_modules/
+node_modules/*
 jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)
@@ -157,4 +158,3 @@ dist
 .svelte-kit
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,node
-node_modules/.package-lock.json
