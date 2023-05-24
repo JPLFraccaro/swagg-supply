@@ -14,19 +14,53 @@ router.get('/', (req,res) => {
       price: parseInt(faker.commerce.price(), 10)
     })
   }
-  res.json(products)
+  res.status(200).json(products)
 })
 
 router.get('/:id', (req,res) => {
   const { id } = req.params
-  res.json(
-    {
-      id,
-      name : "Zapatillas",
-      details: "Zapatillas unisex y unitalla",
-      cents : 900
-    }
-  )
+  if (id==='999'){
+    res.status(404).json({
+      message:"not found"
+    })
+  }
+  else {
+    res.status(200).json(
+      {
+        id,
+        name : "Zapatillas",
+        details: "Zapatillas unisex y unitalla",
+        cents : 900
+      }
+    )
+  }
 })
+
+router.post('/', (req,res) => {
+  const body = req.body
+  res.status(201).json({
+    message: 'created',
+    data: body
+  })
+})
+
+router.patch('/:id', (req,res) => {
+  const body = req.body
+  const { id } = req.params
+  res.status(200).json({
+    id,
+    message: 'partial update',
+    data: body
+  })
+})
+
+router.delete('/:id', (req,res) => {
+  const { id } = req.params
+  res.status(202).json({
+    id,
+    message: 'deleted',
+  })
+})
+
 
 module.exports = router
