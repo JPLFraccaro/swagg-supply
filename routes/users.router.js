@@ -1,41 +1,35 @@
 const express = require('express');
 const router = express.Router();
+const UsersService = require('../services/users.service')
+const service = new UsersService()
 
 router.get('/', (req, res) => {
-  const { limit, offset } = req.query;
-  if (limit && offset) {
-    res.status(200).json({
-      limit,
-      offset,
-    });
-  } else {
-    res.status(400).send('no params');
-  }
+  const users = service.find()
+  res.status(200).json(users)
 });
+
+router.get('/:id', (req,res) => {
+  const { id } = req.params
+  const user = service.findOne(id)
+  res.status(200).json(user)
+})
 
 router.post('/', (req,res) => {
   const body = req.body
-  res.status(201).json({
-    message: 'created',
-    data: body
-  })
+  const newUser = service.create(body)
+  res.status(201).json(newUser)
 })
 
 router.patch('/:id', (req,res) => {
   const body = req.body
   const { id } = req.params
-  res.status(200).json({
-    id,
-    message: 'partial update',
-    data: body
-  })
+  const patchedUser = service.update(id, body)
+  res.status(200).json(patchedUser)
 })
 
 router.delete('/:id', (req,res) => {
   const { id } = req.params
-  res.status(202).json({
-    id,
-    message: 'deleted',
-  })
+  const deletedUser = service.delete(id)
+  res.status(202).json(deletedUser)
 })
 module.exports = router;

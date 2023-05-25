@@ -1,44 +1,35 @@
-const express = require('express')
-const router = express.Router()
+const express = require('express');
+const router = express.Router();
+const CategoriesService = require('../services/categories.service')
+const service = new CategoriesService()
 
-router.get('/', (req,res) => {
-  res.status(200).json ({
-    id:"none"
-  })
-})
+router.get('/', (req, res) => {
+  const categories = service.find()
+  res.status(200).json(categories)
+});
 
 router.get('/:id', (req,res) => {
   const { id } = req.params
-  res.status(200).json (
-    {
-      id
-    } )
+  const category = service.findOne(id)
+  res.status(200).json(category)
 })
 
 router.post('/', (req,res) => {
   const body = req.body
-  res.status(201).json({
-    message: 'created',
-    data: body
-  })
+  const newCategory = service.create(body)
+  res.status(201).json(newCategory)
 })
 
 router.patch('/:id', (req,res) => {
   const body = req.body
   const { id } = req.params
-  res.status(200).json({
-    id,
-    message: 'partial update',
-    data: body
-  })
+  const patchedCategory = service.update(id, body)
+  res.status(200).json(patchedCategory)
 })
 
 router.delete('/:id', (req,res) => {
   const { id } = req.params
-  res.status(202).json({
-    id,
-    message: 'deleted',
-  })
+  const deletedCategory = service.delete(id)
+  res.status(202).json(deletedCategory)
 })
-
-module.exports = router
+module.exports = router;
