@@ -1,4 +1,5 @@
 const { faker } = require('@faker-js/faker')
+const boom = require('@hapi/boom')
 
 class CategoriesService {
 
@@ -18,6 +19,9 @@ class CategoriesService {
   }
 
   async create(data){
+    if (data.id) {
+      throw boom.conflict('no manual ID allowed')
+    }
     const newCategory = {
       id: faker.string.uuid(),
       ...data
@@ -29,27 +33,27 @@ class CategoriesService {
   async find(){
     return new Promise((resolve,reject)=>{
       setTimeout(()=> {
-        if (!this.categories) {
-          reject('no categories found')
-        } else {
+        if (this.categories[0]) {
           resolve(this.categories)
+        } else {
+          reject('there is no category')
         }
-      },1000)
+      }, 1000)
     })
   }
 
   async findOne(id){
-    const index = this.categories.findIndex(item => item.id === id)
-    if (index === -1) {
-      throw new Error('category not found')
+    const category = this.categories.find(item => item.id === id)
+    if (!category) {
+      throw boom.notFound('product not found')
     }
-    return this.categories.find(item => item.id === id)
+    return category
   }
 
   async update(id, changes){
     const index = this.categories.findIndex(item => item.id === id)
     if (index === -1) {
-      throw new Error('category not found')
+      throw boom.notFound('product not found')
     }
     const category = this.categories[index]
     this.categories[index] = {
@@ -62,7 +66,7 @@ class CategoriesService {
   async delete(id){
     const index = this.categories.findIndex(item => item.id === id)
     if (index === -1) {
-      throw new Error('category not found')
+      throw boom.notFound('product not found')
     }
     this.categories.splice(index, 1)
     return id

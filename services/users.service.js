@@ -1,4 +1,5 @@
 const { faker } = require('@faker-js/faker')
+const boom = require('@hapi/boom')
 
 class UsersService {
 
@@ -21,6 +22,9 @@ class UsersService {
   }
 
   async create(data){
+    if (data.id) {
+      throw boom.conflict('no manual ID allowed')
+    }
     const newUser = {
       id: faker.string.uuid(),
       ...data
@@ -32,27 +36,27 @@ class UsersService {
   async find(){
     return new Promise((resolve,reject)=>{
       setTimeout(()=> {
-        if (!this.users) {
-          reject('no user found')
-        } else {
+        if (this.users[0]) {
           resolve(this.users)
+        } else {
+          reject('no user found')
         }
-      },1000)
+      }, 1000)
     })
   }
 
   async findOne(id){
-    const index = this.users.findIndex(item => item.id === id)
-    if (index === -1) {
-      throw new Error('user not found')
+    const user = this.users.find(item => item.id === id)
+    if (!user) {
+      throw boom.notFound('user not found')
     }
-    return this.users.find(item => item.id === id)
+    return user
   }
 
   async update(id, changes){
     const index = this.users.findIndex(item => item.id === id)
     if (index === -1) {
-      throw new Error('user not found')
+      throw boom.notFound('user not found')
     }
     const user = this.users[index]
     this.users[index] = {
@@ -65,7 +69,7 @@ class UsersService {
   async delete(id){
     const index = this.users.findIndex(item => item.id === id)
     if (index === -1) {
-      throw new Error('user not found')
+      throw boom.notFound('user not found')
     }
     this.users.splice(index, 1)
     return id

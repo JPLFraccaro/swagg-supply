@@ -1,4 +1,5 @@
 const { faker } = require('@faker-js/faker')
+const boom = require('@hapi/boom')
 
 class OrdersService {
 
@@ -33,7 +34,11 @@ class OrdersService {
       })
     }
   }
+
   async create(data){
+    if (data.orderID) {
+      throw boom.conflict('no manual ID allowed')
+    }
     const newOrder = {
       orderID: faker.string.uuid(),
       ...data
@@ -46,19 +51,19 @@ class OrdersService {
 
     return new Promise((resolve,reject)=>{
       setTimeout(()=> {
-        if (!this.orders) {
-          reject('non product found')
-        } else {
+        if (this.orders[0]) {
           resolve(this.orders)
+        } else {
+          reject('there is no order')
         }
       },1000)
     })
   }
 
   async findOne(orderID){
-    const index = this.orders.findIndex(item => item.id === orderID)
-    if (index === -1) {
-      throw new Error('product not found')
+    const order = this.orders.find(item => item.id === orderID)
+    if (!order) {
+      throw boom.notFound('order not found')
     }
     return this.orders.find(item => item.orderID === orderID)
   }
@@ -66,7 +71,7 @@ class OrdersService {
   async update(orderID, changes){
     const index = this.orders.findIndex(item => item.orderID === orderID)
     if (index === -1) {
-      throw new Error('order not found')
+      throw boom.notFound('order not found')
     }
     const order = this.orders[index]
     this.orders[index] = {
@@ -79,7 +84,7 @@ class OrdersService {
   async delete(orderID){
     const index = this.orders.findIndex(item => item.orderID === orderID)
     if (index === -1) {
-      throw new Error('order not found')
+      throw boom.notFound('order not found')
     }
     this.orders.splice(index, 1)
     return orderID
