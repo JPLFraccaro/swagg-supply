@@ -25,7 +25,7 @@ class OrdersService {
     const limit = 3
     for (let i = 0; i < limit; i++) {
       this.orders.push({
-        orderID: faker.string.uuid(),
+        id: faker.string.uuid(),
         orderDescription: this.generateDescription(),
         userID: faker.string.uuid(),
         paid: faker.datatype.boolean(),
@@ -36,11 +36,11 @@ class OrdersService {
   }
 
   async create(data){
-    if (data.orderID) {
+    if (data.id) {
       throw boom.conflict('no manual ID allowed')
     }
     const newOrder = {
-      orderID: faker.string.uuid(),
+      id: faker.string.uuid(),
       ...data
     }
     this.orders.push(newOrder)
@@ -60,16 +60,16 @@ class OrdersService {
     })
   }
 
-  async findOne(orderID){
-    const order = this.orders.find(item => item.id === orderID)
+  async findOne(id){
+    const order = this.orders.find(item => item.id === id)
     if (!order) {
       throw boom.notFound('order not found')
     }
-    return this.orders.find(item => item.orderID === orderID)
+    return this.orders.find(item => item.id === id)
   }
 
-  async update(orderID, changes){
-    const index = this.orders.findIndex(item => item.orderID === orderID)
+  async update(id, changes){
+    const index = this.orders.findIndex(item => item.id === id)
     if (index === -1) {
       throw boom.notFound('order not found')
     }
@@ -81,13 +81,13 @@ class OrdersService {
     return this.orders[index]
   }
 
-  async delete(orderID){
-    const index = this.orders.findIndex(item => item.orderID === orderID)
+  async delete(id){
+    const index = this.orders.findIndex(item => item.id === id)
     if (index === -1) {
       throw boom.notFound('order not found')
     }
     this.orders.splice(index, 1)
-    return orderID
+    return id
 
   }
 }
